@@ -5,23 +5,35 @@ import json
 # import sqlalchemy as sa
 import time
 import click
-import os
+import re
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
-@click.command(context_settings=CONTEXT_SETTINGS, options_metavar='<options>')
-@click.argument('filename', metavar='<FILENAME>')
+@click.command(context_settings=CONTEXT_SETTINGS, options_metavar='[options]')
+@click.argument('filename', metavar='<FILENAME>', type=click.Path(exists=True))
+@click.argument('uri', metavar='<URI>')
 
-def csv_2_sql(filename):
-    """ A BASIC CLI TOOL TO IMPORT STRUCTURED CSV DATA TO A DATABASE """
+def csv_2_sql(filename, uri):
+    """A BASIC CLI TOOL TO IMPORT STRUCTURED CSV DATA TO A DATABASE.\n
+    Arguments :-\n
+        <FILENAME> : CSV or Plain-Text File Name with the Data.\n
+        <URI> : Database Engine URL.\n
+                The url format should be maintained in the format.\n
+                e.g : "mysql://user:pass@host:port/DB"\n
+
+    """
+
     start_time = time.clock()
-    FILEPATH = os.path.join(os.getcwd(), filename)
-    print(FILEPATH)
-    # MODIFY_CSV = "./datasets/title.principals.0.csv"
 
-    # CONFIG_JSON = "./conf/db_info.json"
-    # with open(CONFIG_JSON,'r') as fp:
-    #     db_info = json.load(fp)
+    FILENAME=click.format_filename(filename)
+    if not FILENAME:
+        click.echo(FILENAME)
+
+    uri_match = re.match(r'^.*://.*:.*@.*:.*/.*$', uri)
+    if not uri_match:
+        click.echo("{0} doesn't match the URI format for the database".format(uri))
+    else:
+        click.echo("Success URI is {0}".format(uri))
     # ENGINE_URL = db_info['type']+"://"+db_info['user']+":"+db_info['pass']+"@"+db_info['host']+":"+db_info['port']+"/"+db_info['name']+"?charset=utf8"
     # print ENGINE_URL
 
@@ -55,4 +67,4 @@ def csv_2_sql(filename):
     # except Exception, e:
     #     print "EXCEPTION", e
 
-    print("Transfer completed in {0:.6f} seconds>".format(time.clock() - start_time))
+    click.echo("Command executed in {0:.6f} seconds>".format(time.clock() - start_time))
