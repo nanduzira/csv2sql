@@ -1,0 +1,4 @@
+ENV/
+.vscode/
+csv2sql.egg-info
+__pycache__/
