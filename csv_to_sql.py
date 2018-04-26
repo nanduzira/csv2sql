@@ -36,8 +36,9 @@ def csv_2_sql(filename, uri):
         else:
             click.echo("DATABASE URI : {0}".format(uri))
             engine = sa.create_engine(uri, encoding="utf-8", echo=True)
-            if engine:
-                print("ENGINE CONNECTED")
+            con = engine.connect()
+            if con:
+                print("ENGINE CONNECTED", con)
             else:
                 print("engine not connected")
     # con = engine.connect()
