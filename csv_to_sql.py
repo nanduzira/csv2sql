@@ -2,7 +2,7 @@
 import csv
 import json
 # import numpy as np
-# import sqlalchemy as sa
+import sqlalchemy as sa
 import time
 import click
 import re
@@ -14,13 +14,13 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.argument('uri', metavar='<URI>')
 
 def csv_2_sql(filename, uri):
-    """A BASIC CLI TOOL TO IMPORT STRUCTURED CSV DATA TO A DATABASE.\n
+    """
+    A BASIC CLI TOOL TO IMPORT STRUCTURED CSV DATA TO A DATABASE.\n
     Arguments :-\n
         <FILENAME> : CSV or Plain-Text File Name with the Data.\n
         <URI> : Database Engine URL.\n
                 The url format should be maintained in the format.\n
-                e.g : "mysql://user:pass@host:port/DB"\n
-
+                e.g : "dialect+driver://username:password@host:port/database"\n
     """
 
     start_time = time.clock()
@@ -28,16 +28,18 @@ def csv_2_sql(filename, uri):
     FILENAME=click.format_filename(filename)
     if not FILENAME:
         click.echo(FILENAME)
-
-    uri_match = re.match(r'^.*://.*:.*@.*:.*/.*$', uri)
-    if not uri_match:
-        click.echo("{0} doesn't match the URI format for the database".format(uri))
     else:
-        click.echo("Success URI is {0}".format(uri))
-    # ENGINE_URL = db_info['type']+"://"+db_info['user']+":"+db_info['pass']+"@"+db_info['host']+":"+db_info['port']+"/"+db_info['name']+"?charset=utf8"
-    # print ENGINE_URL
-
-    # engine = sa.create_engine(ENGINE_URL, encoding="utf-8", echo=True)
+        click.echo("FILENAME : {0}".format(FILENAME))
+        uri_match = re.match(r'^.*://.*:.*@.*:.*/.*$', uri)
+        if not uri_match:
+            click.echo("{0} doesn't match the URI format for the database".format(uri))
+        else:
+            click.echo("DATABASE URI : {0}".format(uri))
+            engine = sa.create_engine(uri, encoding="utf-8", echo=True)
+            if engine:
+                print("ENGINE CONNECTED")
+            else:
+                print("engine not connected")
     # con = engine.connect()
 
     # with open(FILENAME, 'rb') as csvfile:
