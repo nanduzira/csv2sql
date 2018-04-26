@@ -28,20 +28,26 @@ def csv_2_sql(filename, uri):
     FILENAME=click.format_filename(filename)
     if not FILENAME:
         click.echo(FILENAME)
+        click.echo("Command executed in {0:.6f} seconds.".format(time.clock() - start_time))
+        exit(0)
     else:
-        click.echo("FILENAME : {0}".format(FILENAME))
-        uri_match = re.match(r'^.*://.*:.*@.*:.*/.*$', uri)
-        if not uri_match:
-            click.echo("{0} doesn't match the URI format for the database".format(uri))
-        else:
-            click.echo("DATABASE URI : {0}".format(uri))
-            engine = sa.create_engine(uri, encoding="utf-8", echo=True)
-            con = engine.connect()
-            if con:
-                print("ENGINE CONNECTED", con)
-            else:
-                print("engine not connected")
-    # con = engine.connect()
+        click.echo("FILENAME : {0}.".format(FILENAME))
+
+    uri_match = re.match(r'^.*://.*:.*@.*:.*/.*$', uri)
+    if not uri_match:
+        click.echo("{0} doesn't match the URI format of the database.".format(uri))
+        click.echo("Command executed in {0:.6f} seconds.".format(time.clock() - start_time))
+        exit(0)
+    else:
+        click.echo("DATABASE URI : {0}.".format(uri))
+
+    engine = sa.create_engine(uri, encoding="utf-8", echo=True)
+    con = engine.connect()
+    if con:
+        click.echo("ENGINE CONNECTED : {0}.".format(con))
+    else:
+        click.echo("{0} engine can't be connected.".format(con))
+        exit(0)
 
     # with open(FILENAME, 'rb') as csvfile:
     #     spamreader = csv.reader(csvfile, delimiter='\t', quotechar='|')
@@ -70,4 +76,4 @@ def csv_2_sql(filename, uri):
     # except Exception, e:
     #     print "EXCEPTION", e
 
-    click.echo("Command executed in {0:.6f} seconds>".format(time.clock() - start_time))
+    click.echo("Command executed in {0:.6f} seconds.".format(time.clock() - start_time))
